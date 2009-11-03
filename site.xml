@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description name="CIMTool" url="http://rwl.github.com/CIMTool">
+      Version of CIMTool with ECore buildlet.
+   </description>
+   <feature url="features/au.com.langdale.cimtoole.feature_1.6.5.200911031116.jar" id="au.com.langdale.cimtoole.feature" version="1.6.5.200911031116">
+      <category name="ontology"/>
+   </feature>
+   <category-def name="ontology" label="Modelling and Ontology"/>
+</site>
