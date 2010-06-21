@@ -19,38 +19,42 @@ import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.util.Jobs;
 
 public class ExportSchema extends Wizard implements IExportWizard {
-	
-	private SchemaExportPage main = new SchemaExportPage();
-	
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		setWindowTitle("Export Schema"); 
-		setNeedsProgressMonitor(true);
-		main.setTitle(getWindowTitle());
-		main.setDescription("Export the merged schema as OWL.");
-		main.setSelected(selection);
-	}
-	
-	@Override
-    public void addPages() {
-        addPage(main);        
+
+    public static final String SCHEMA = "schema.merged-owl";
+    private SchemaExportPage main = new SchemaExportPage();
+
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        setWindowTitle("Export Schema");
+        setNeedsProgressMonitor(true);
+        main.setTitle(getWindowTitle());
+        main.setDescription("Export the merged schema as OWL.");
+        main.setSelected(selection);
     }
-	
-	class InternalSchemaTask extends SchemaBuildlet implements IWorkspaceRunnable {
-		IProject project = main.getProject();
-		String ns = main.getNamespace();
-		
-		public void run(IProgressMonitor monitor) throws CoreException {
-			Info.putProperty( project, Info.MERGED_SCHEMA_PATH, SchemaExportPage.SCHEMA);
-			Info.putProperty( project, Info.PROFILE_NAMESPACE, ns);
-			build(project.getFile(SchemaExportPage.SCHEMA), monitor);
-		}
-	}
-	
-	@Override
-	public boolean performFinish() {
-		if( main.isInternal())
-			return Jobs.runInteractive(new InternalSchemaTask(), main.getProject(), getContainer(), getShell());
-		else
-			return Jobs.runInteractive(Task.exportSchema(main.getProject(), main.getPathname(), main.getNamespace()), null, getContainer(), getShell());
-	}
+
+    @Override
+    public void addPages() {
+        addPage(main);
+    }
+
+    class InternalSchemaTask extends SchemaBuildlet implements IWorkspaceRunnable {
+        IProject project = main.getProject();
+        String ns = main.getNamespace();
+
+        public void run(IProgressMonitor monitor) throws CoreException {
+//            Info.putProperty( project, Info.MERGED_SCHEMA_PATH, SchemaExportPage.SCHEMA);
+//            Info.putProperty( project, Info.PROFILE_NAMESPACE, ns);
+//            build(project.getFile(SchemaExportPage.SCHEMA), monitor);
+
+            Info.putProperty( project, Info.MERGED_SCHEMA_PATH, SCHEMA);
+            build(project.getFile(SCHEMA), monitor);
+        }
+    }
+
+    @Override
+    public boolean performFinish() {
+        if( main.isInternal())
+            return Jobs.runInteractive(new InternalSchemaTask(), main.getProject(), getContainer(), getShell());
+        else
+            return Jobs.runInteractive(Task.exportSchema(main.getProject(), main.getPathname(), main.getNamespace()), null, getContainer(), getShell());
+    }
 }

@@ -16,6 +16,11 @@ public class ECoreGenerator extends SchemaGenerator {
 	private String namespace;
 	private boolean addRootClass;
 
+    public static final String ELEMENT_CLASS_NAME = "Element";
+    public static final String ELEMENT_CLASS_IDENTIFIER = "UUID";
+    public static final String RDF_SERIALISATION_ANNOTATION = "http://cimphony.com/rdf/2010/serialisation";
+    public static final String PROFILE_ANNOTATION = "http://cimphony.com/profiles/2010/profile";
+
 	EcoreFactory coreFactory = EcoreFactory.eINSTANCE;
 	EcorePackage corePackage = EcorePackage.eINSTANCE;
 
