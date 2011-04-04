@@ -59,7 +59,8 @@ public class EcoreGenerator extends SchemaGenerator {
 	public static final String ELEMENT_CLASS_IDENTIFIER = "UUID";
 	public static final String RDF_SERIALISATION_ANNOTATION = "http://cimphony.com/rdf/2010/serialisation";
 	public static final String PROFILE_ANNOTATION = "http://cimphony.com/profiles/2010/profile";
-
+	public static final String UML_NS = UML.NS.substring(0, UML.NS.length()-1);
+	
 	EcoreFactory coreFactory = EcoreFactory.eINSTANCE;
 	EcorePackage corePackage = EcorePackage.eINSTANCE;
 
@@ -244,7 +245,6 @@ public class EcoreGenerator extends SchemaGenerator {
 		}
 
 		index.root.setNsPrefix("cim");
-		// TODO: Need a nice option pane to set whether we do this or not
 		index.root.setNsURI(this.namespace);
 
 		Iterator<?> nt = datatypes.iterator();
@@ -309,6 +309,12 @@ public class EcoreGenerator extends SchemaGenerator {
 		}
 
 		for (Iterator<EDataType> ix = index.eDataTypes.values().iterator(); ix.hasNext();) {
+			EDataType dt = ix.next();
+			if (dt.getEPackage() == null)
+				index.root.getEClassifiers().add(dt);
+		}
+
+		for (Iterator<EDataType> ix = index.eTypes.values().iterator(); ix.hasNext();) {
 			EDataType dt = ix.next();
 			if (dt.getEPackage() == null)
 				index.root.getEClassifiers().add(dt);
@@ -408,7 +414,6 @@ public class EcoreGenerator extends SchemaGenerator {
 	protected void emitDatatypeProperty(String uri, String base, String domain,
 			String type, String xsdtype, boolean required) {
 		EAttribute attr = coreFactory.createEAttribute();
-
 		if (index.eDataTypes.containsKey(type)) {
 			EDataType dt = index.eDataTypes.get(type);
 			attr.setEType(dt);
@@ -451,7 +456,7 @@ public class EcoreGenerator extends SchemaGenerator {
 	protected void emitStereotype(String uri, String stereo) {
 		if (index.eClasses.containsKey(uri)) {
 			EClass klass = index.eClasses.get(uri);
-			if (stereo.equals("http://langdale.com.au/2005/UML#concrete")) {
+			if (stereo.equals(UML.concrete.toString())) {
 				klass.setAbstract(false);
 			}
 		} else {
@@ -506,21 +511,21 @@ public class EcoreGenerator extends SchemaGenerator {
 			if (index.eClasses.containsKey(uri)){
 				System.out.println(uri +" is compound");
 				EClass cls = index.eClasses.get(uri);
-				if (cls.getEAnnotation(UML.NS) == null){
+				if (cls.getEAnnotation(UML_NS) == null){
 					EAnnotation profileAnnotation = coreFactory.createEAnnotation();
-					profileAnnotation.setSource(UML.NS);
+					profileAnnotation.setSource(UML_NS);
 					cls.getEAnnotations().add(profileAnnotation);
 				}
-				cls.getEAnnotation(UML.NS).getDetails().put("CIMDataType", "Compound");
+				cls.getEAnnotation(UML_NS).getDetails().put("CIMDataType", "Compound");
 			}
 			//			ref.setContainment(true);
 		}
 	}
 	
 	protected boolean isCompound(EClass cls){
-		if (cls.getEAnnotation(UML.NS)==null) return false;
-		if (cls.getEAnnotation(UML.NS).getDetails().get("CIMDataType")==null) return false;
-		if (cls.getEAnnotation(UML.NS).getDetails().get("CIMDataType").equals("Compound")) return true;
+		if (cls.getEAnnotation(UML_NS)==null) return false;
+		if (cls.getEAnnotation(UML_NS).getDetails().get("CIMDataType")==null) return false;
+		if (cls.getEAnnotation(UML_NS).getDetails().get("CIMDataType").equals("Compound")) return true;
 		return false;
 		
 	}
@@ -552,6 +557,7 @@ public class EcoreGenerator extends SchemaGenerator {
 
 			EEnum eEnum = index.eEnums.get(range);
 			attr.setEType(eEnum);
+			attr.setUnsettable(true);
 
 			if (!merged && required == true)
 				attr.setLowerBound(1);
