@@ -663,10 +663,10 @@ public class EcoreGenerator extends SchemaGenerator {
 				if (baseComment != null) {
 					EAnnotation baseAnnotation = coreFactory.createEAnnotation();
 					baseAnnotation.setSource(namespace);
-					baseAnnotation.getDetails().put("Documentation", baseComment);
+					baseAnnotation.getDetails().put("documentation", baseComment);
 					annotated.getEAnnotations().add(baseAnnotation);
 
-					genModelAnnotation.getDetails().put("Documentation", baseComment);
+					genModelAnnotation.getDetails().put("documentation", baseComment);
 				}
 
 				if (profileComment != null) {
