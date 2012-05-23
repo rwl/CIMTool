@@ -26,10 +26,13 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.util.ExtendedMetaData;
 
 import au.com.langdale.cimtoole.project.Task;
+import au.com.langdale.kena.NodeIterator;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Property;
 import au.com.langdale.kena.ResIterator;
 import au.com.langdale.profiles.ProfileClass;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
@@ -37,6 +40,9 @@ import au.com.langdale.profiles.SchemaGenerator;
 import au.com.langdale.xmi.UML;
 
 import com.cimphony.cimtoole.util.CIMToolEcoreUtil;
+import com.hp.hpl.jena.graph.FrontsNode;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.rdf.model.impl.PropertyImpl;
 
 public class EcoreGenerator extends SchemaGenerator {
 
@@ -534,13 +540,29 @@ public class EcoreGenerator extends SchemaGenerator {
 	protected void emitObjectProperty(String uri, String base, String domain,
 			String range, boolean required, boolean functional) {
 		if (index.eClasses.containsKey(domain) && index.eClasses.containsKey(range)) {
+			
 			EReference ref = coreFactory.createEReference();
 			EClass klass = index.eClasses.get(domain);
 			klass.getEStructuralFeatures().add(ref);
 
+			NodeIterator i =profileModel.listObjects();
+			boolean found = false;
+			// Must be an easier way to do this...
+			while (i.hasNext()){
+				Object o = i.next();
+				if (o instanceof Node && ((Node)o).isURI())
+					if (((Node)o).getURI().equals(uri)){
+						found = true;
+						break;
+					}
+			}
+			if (!found)
+				System.out.println(uri +" is transient");
+			
 			EClass referenced = index.eClasses.get(range);
 			ref.setEType(referenced);
-
+			if (!found)
+				ref.setTransient(true);
 			if (!merged && required == true)
 				ref.setLowerBound(1);
 
@@ -663,10 +685,10 @@ public class EcoreGenerator extends SchemaGenerator {
 				if (baseComment != null) {
 					EAnnotation baseAnnotation = coreFactory.createEAnnotation();
 					baseAnnotation.setSource(namespace);
-					baseAnnotation.getDetails().put("Documentation", baseComment);
+					baseAnnotation.getDetails().put("documentation", baseComment);
 					annotated.getEAnnotations().add(baseAnnotation);
 
-					genModelAnnotation.getDetails().put("Documentation", baseComment);
+					genModelAnnotation.getDetails().put("documentation", baseComment);
 				}
 
 				if (profileComment != null) {
