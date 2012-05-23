@@ -27,9 +27,9 @@ public class SchemaExportPage extends FurnishedWizardPage {
 	private String SCHEMA = "schema.merged-owl";
 	private String fileExt = "owl";
 	
-	private boolean internal;
-	private TextBinding path = new TextBinding(Validators.NEW_FILE);
-	private ProjectBinding projects = new ProjectBinding();
+	protected boolean internal;
+	protected TextBinding path = new TextBinding(Validators.NEW_FILE);
+	protected ProjectBinding projects = new ProjectBinding();
 
 	
 	public SchemaExportPage(){

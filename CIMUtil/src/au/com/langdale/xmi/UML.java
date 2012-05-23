@@ -46,6 +46,7 @@ public class UML {
 	public final static Resource concrete = ResourceFactory.createResource(NS + "concrete");
 	public final static Resource compound = ResourceFactory.createResource(NS + "compound");
 	public final static Resource preserve = ResourceFactory.createResource(NS + "preserve");
+	public final static Resource cimextension = ResourceFactory.createResource(NS + "cimextension");
 	
 	// stereotype the two forms of aggregation, each in two directions
 	public final static Resource ofComposite = ResourceFactory.createResource(NS + "ofComposite");
@@ -114,6 +115,7 @@ public class UML {
 		model.createIndividual(ofAggregate.getURI(), Stereotype).addLabel("Of Aggregate", null);
 		model.createIndividual(compositeOf.getURI(), Stereotype).addLabel("Composite Of", null);
 		model.createIndividual(aggregateOf.getURI(), Stereotype).addLabel("Aggregate Of", null);
+		model.createIndividual(cimextension.getURI(), Stereotype).addLabel("CIMExtension", null);
 		
 		model.createAnnotationProperty(baseuri.getURI());
 		model.createAnnotationProperty(baseprefix.getURI());
