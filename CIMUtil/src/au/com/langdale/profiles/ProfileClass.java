@@ -13,6 +13,7 @@ import java.util.Set;
 
 import au.com.langdale.xmi.UML;
 
+import au.com.langdale.kena.NodeIterator;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.Property;
@@ -67,7 +68,7 @@ public class ProfileClass {
 //				System.out.println(node.describe());
 //				
 //			}
-			if( node.isClass() && ! node.equals(MESSAGE.Reference)) {
+			if( node.isClass() && ! node.equals(MESSAGE.Reference) && !node.hasProperty(UML.Stereotype, UML.cimextension)) {
 				if(node.isRestriction()) {
 					OntResource prop = node.getOnProperty();
 					if( prop != null)
@@ -79,6 +80,11 @@ public class ProfileClass {
 						classes.add(node); // locally defined class
 					}
 					else {
+						NodeIterator pit = model.listObjectsOfProperty(node, UML.Stereotype);
+						while (pit.hasNext()){
+							System.out.println(pit.next());
+						}
+						
 						baseClass = node; // externally defined class (expect only one)
 					}
 				}

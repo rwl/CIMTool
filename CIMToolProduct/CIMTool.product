@@ -71,6 +71,7 @@ See the GNU Lesser General Public License for more details.
       <plugin id="au.com.langdale.kena"/>
       <plugin id="au.com.langdale.rcputil"/>
       <plugin id="com.cimphony.cimtoole"/>
+      <plugin id="com.cimphony.cimtoole.altxsd"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="javax.servlet"/>
       <plugin id="javax.xml"/>

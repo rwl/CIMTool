@@ -4,6 +4,7 @@
  */
 package au.com.langdale.xmi;
 
+import au.com.langdale.kena.NodeIterator;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
@@ -126,7 +127,6 @@ public class CIMInterpreter extends UMLInterpreter {
 		applyPrimitiveStereotype(UML.base, true); // in future, change to false
 		applyPrimitiveStereotype(UML.union, false);
 
-
 		ResIterator lt = model.listSubjectsBuffered(UML.hasStereotype, UML.extendedBy);
 		while( lt.hasNext()) {
 			convertAssocToSubClassOf(lt.nextResource());
@@ -225,6 +225,7 @@ public class CIMInterpreter extends UMLInterpreter {
 		if( prop != null )
 			convertPropToSubClassOf(prop);
 	}
+	
 	
 	private void convertPropToSubClassOf(OntResource prop) {
 		OntResource range = prop.getRange();

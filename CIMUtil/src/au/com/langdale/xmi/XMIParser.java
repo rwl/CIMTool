@@ -164,6 +164,7 @@ public class XMIParser extends XMIModel {
 	        
 	        @Override
 			public void visit(XMLElement element, String text) {
+
 	        	if( tagValue == null )
 	        		tagValue = text;
 	        	else
@@ -320,6 +321,7 @@ public class XMIParser extends XMIModel {
 		private class GeneralizationMode extends BaseMode {
 		    OntResource ontChild;
 		    OntResource ontParent;
+		    OntResource stereo;
 		    
 		    GeneralizationMode(XMLElement element) {
 		    	ontChild = findClass(element, "child");
@@ -327,18 +329,33 @@ public class XMIParser extends XMIModel {
 		    }
 		
 		    public XMLMode visit(XMLElement element) {
-		        if ( element.matches("Generalization.child"))
+		    	if ( element.matches("Generalization.child"))
 			        return new GeneralizationChildMode();
 			    else if ( element.matches("Generalization.parent")) 
 			        return new GeneralizationParentMode();
+			    else if ( element.matches("ModelElement.stereotype")) 
+			        return new GeneralizationStereotypeMode();
 			    else
 			    	return this;
 			}
 		    
+		    private class GeneralizationStereotypeMode extends BaseMode{
+		    	@Override
+		    	public XMLMode visit(XMLElement element) {
+		    		if (element.matches("Stereotype")){
+		    			stereo = createStereotype(element);
+		    		}
+	    			return null;		    		
+		    	}
+		    	
+		    }
+		    
 		    private class GeneralizationChildMode extends BaseMode {
 			    public XMLMode visit(XMLElement element) {
 				    if ( element.matches("Class")) {
-				        ontChild = findClass(element);
+				       	if (element.getAttributes().getValue("xmi.idref").equals("EAID_4A84BEAD_A18F_4474_B5D6_471216783A07"))
+				    		System.err.println("Here");
+				       	ontChild = findClass(element);
 				        return null;
 					}
 					return this;
@@ -349,6 +366,7 @@ public class XMIParser extends XMIModel {
 			    
 			    public XMLMode visit(XMLElement element) {
 				    if ( element.matches("Class")) {
+
 				        ontParent = findClass(element);
 				        return null;
 					}
@@ -360,6 +378,9 @@ public class XMIParser extends XMIModel {
 			public void leave() {;
 		    	if ( ontChild != null && ontParent != null)  {
 		    	    ontParent.addSubClass(ontChild);
+		    	    if (stereo!=null){
+		    	    	ontParent.addProperty(UML.hasStereotype, stereo);
+		    	    }
 		    	}
 		    }
 		}
